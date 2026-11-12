@@ -72,7 +72,7 @@ h2{font-size:42px;line-height:1.12;font-weight:800;letter-spacing:-.015em;margin
 .team li{font-size:20px;color:#e6ebff;padding-left:16px;border-left:3px solid #ffb585}
 .cover-art{position:absolute;right:-10px;top:80px;width:540px;opacity:.95}
 .thanks{align-items:center;justify-content:center;text-align:center}
-.thanks h1{font-size:110px}
+.thanks h1{font-size:150px}
 .thanks .qq{font-size:40px;color:#ffb585;font-weight:700;margin-top:6px}
 .chain{display:flex;align-items:center;gap:14px;margin-top:56px;justify-content:center;flex-wrap:wrap}
 .chain .n{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:118px;padding:14px 18px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14)}
@@ -543,55 +543,8 @@ h2{font-size:42px;line-height:1.12;font-weight:800;letter-spacing:-.015em;margin
 <!-- 19 · CIERRE -->
 <section class="slide dark thanks" data-sec="Cierre">
   <h1 class="a zoom">Gracias</h1>
-  <div class="qq a" style="--d:.3s">¿Preguntas?</div>
-  <div class="chain">
-    <div class="n a" style="--d:.6s"><b class="mono" style="font-size:24px;padding:6px 0">(0+1)*01</b><span>ER</span></div><span class="arr a" style="--d:.7s">→</span>
-    <div class="n a" style="--d:.8s"><b>10</b><span>AFN-ε</span></div><span class="arr a" style="--d:.9s">→</span>
-    <div class="n a" style="--d:1s"><b>5</b><span>AFN</span></div><span class="arr a" style="--d:1.1s">→</span>
-    <div class="n a" style="--d:1.2s"><b>4</b><span>AFD</span></div><span class="arr a" style="--d:1.3s">→</span>
-    <div class="n a" style="--d:1.4s;border-color:#ffb585"><b style="color:#ffb585">3</b><span>Mínimo</span></div>
-  </div>
 </section>
 
-<!-- 20 · ANEXO A -->
-<section class="slide" data-sec="Anexo (solo si preguntan)">
-  <div class="hd a"><span class="kicker" style="color:var(--muted)">Anexo · solo si preguntan</span></div>
-  <h2 class="a" style="--d:.1s">Tabla completa de ε-clausuras</h2>
-  <div class="body center" style="gap:30px;align-items:flex-start">
-    <table class="tbl sm a" style="--d:.2s;min-width:440px">
-      <tr><th>q</th><th>ε-clausura(q)</th></tr>
-      <tr><td>q0</td><td>{q0, q1, q2, q4, q7}</td></tr>
-      <tr><td>q1</td><td>{q1, q2, q4}</td></tr>
-      <tr><td>q2</td><td>{q2}</td></tr>
-      <tr><td>q3</td><td>{q1, q2, q3, q4, q6, q7}</td></tr>
-      <tr><td>q4</td><td>{q4}</td></tr>
-    </table>
-    <table class="tbl sm a" style="--d:.3s;min-width:440px">
-      <tr><th>q</th><th>ε-clausura(q)</th></tr>
-      <tr><td>q5</td><td>{q1, q2, q4, q5, q6, q7}</td></tr>
-      <tr><td>q6</td><td>{q1, q2, q4, q6, q7}</td></tr>
-      <tr><td>q7</td><td>{q7}</td></tr>
-      <tr><td>q8</td><td>{q8}</td></tr>
-      <tr class="acc"><td>q9</td><td>{q9}</td></tr>
-    </table>
-  </div>
-  <div class="note a" style="--d:.4s;text-align:center">δ′(q, a) = δ(ε-clausura(q), a) &nbsp;·&nbsp; F′ = { q : ε-clausura(q) contiene a q9 } = {q9}</div>
-</section>
-
-<!-- 21 · ANEXO B -->
-<section class="slide" data-sec="Anexo (solo si preguntan)">
-  <div class="hd a"><span class="kicker" style="color:var(--muted)">Anexo · solo si preguntan</span></div>
-  <h2 class="a" style="--d:.1s">Pares distinguibles del AFD</h2>
-  <div class="body center">
-    <table class="tbl a" style="--d:.2s;min-width:820px">
-      <tr><th>Par</th><th>Cadena que los distingue</th></tr>
-      <tr><td>(A, B)</td><td>1 → A llega a C ✗, B llega a D ✓</td></tr>
-      <tr><td>(B, C)</td><td>1 → B llega a D ✓, C llega a C ✗</td></tr>
-      <tr><td>(A, D) (B, D) (C, D)</td><td>ε → solo D es de aceptación</td></tr>
-      <tr class="acc"><td>(A, C)</td><td>ninguna → equivalentes, se fusionan</td></tr>
-    </table>
-  </div>
-</section>
 
 </div>
 
