@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cadenas que terminan en 01</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f4ef; --surface:#ffffff; --soft:#eef1f7; --ink:#16203a; --muted:#66708a; --line:#dcd8ce;
+  --dark:#0f1730; --dark2:#18234a;
+  --c0:#e8590c; --c0s:#fff0e6; --c1:#1c7ed6; --c1s:#e7f3ff; --eps:#9aa0b8;
+  --ok:#2f9e44; --oks:#e9f7ec; --bad:#e03131; --bads:#fdecec; --hl:#fff3bf; --gold:#f59f00;
+  --sans:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,"Cascadia Mono",Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#0b1126;color:var(--ink);font-family:var(--sans);overflow:hidden;-webkit-font-smoothing:antialiased;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;background:var(--bg);overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.45);border-radius:6px}
+
+/* ---------- slides ---------- */
+.slide{position:absolute;inset:0;padding:54px 72px 56px;display:flex;flex-direction:column;opacity:0;visibility:hidden;transform:translateX(50px);
+  transition:opacity .55s ease,transform .6s cubic-bezier(.2,.7,.2,1),visibility 0s linear .6s;background:var(--bg)}
+.slide.past{transform:translateX(-50px)}
+.slide.active{opacity:1;visibility:visible;transform:none;transition:opacity .55s ease,transform .6s cubic-bezier(.2,.7,.2,1),visibility 0s}
+.slide.dark{background:radial-gradient(1200px 700px at 85% 20%,#22306a 0%,var(--dark) 60%);color:#fff}
+
+/* entrance animations */
+.a{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+.a.zoom{transform:scale(.88)}
+.a.left{transform:translateX(-26px)}
+.slide.active .a{opacity:1;transform:none;transition-delay:var(--d,0s)}
+.f{opacity:0;transform:translateY(12px);transition:opacity .45s ease,transform .5s cubic-bezier(.2,.7,.2,1)}
+.f.on{opacity:1;transform:none}
+
+/* header */
+.hd{display:flex;align-items:center;gap:16px;margin-bottom:10px}
+.kicker{font-size:15px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--c0)}
+.kicker .lc{text-transform:none}
+.bars{display:flex;gap:5px;margin-left:auto}
+.bars i{display:block;width:26px;height:6px;border-radius:3px;background:#dcd8ce}
+.bars i.on{background:var(--c0)}
+h1{font-size:64px;line-height:1.05;font-weight:800;letter-spacing:-.02em}
+h2{font-size:42px;line-height:1.12;font-weight:800;letter-spacing:-.015em;margin-bottom:22px}
+.lead{font-size:24px;color:var(--muted);line-height:1.45}
+.lead b{color:var(--ink)}
+.body{flex:1;display:flex;min-height:0}
+.center{align-items:center;justify-content:center}
+.col{flex-direction:column}
+.slide.v>h2{margin-bottom:auto}.slide.v>:last-child{margin-bottom:auto}
+.mono{font-family:var(--mono)}
+.z{color:var(--c0)} .o{color:var(--c1)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px 26px;box-shadow:0 2px 0 rgba(22,32,58,.03)}
+.pill{display:inline-block;padding:8px 16px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-size:19px;font-weight:600}
+.pill b{color:var(--c0)}
+.chip{font-family:var(--mono);font-size:30px;font-weight:700;padding:10px 20px;border-radius:14px;background:var(--surface);border:2px solid var(--line);letter-spacing:.04em}
+.end01{border-radius:6px;padding:0 3px}
+.yes .end01{background:var(--oks);color:var(--ok);box-shadow:inset 0 -3px 0 var(--ok)}
+.chip.no{color:#9a3b3b;border-color:#f3c9c9;background:var(--bads)}
+.chip.yes{border-color:#bfe3c7}
+.note{font-size:16px;color:var(--muted)}
+
+/* ---------- cover ---------- */
+.cover{justify-content:center}
+.cover .kicker{color:#ffb585}
+.cover h1{font-size:68px;max-width:700px}
+.big01{font-family:var(--mono);color:#ffb585}
+.cover .sub{margin-top:22px;font-size:24px;color:#c9d2f2;font-family:var(--mono)}
+.team{list-style:none;margin-top:46px;display:grid;grid-template-columns:repeat(2,minmax(0,410px));gap:12px 28px}
+.team li{font-size:20px;color:#e6ebff;padding-left:16px;border-left:3px solid #ffb585}
+.cover-art{position:absolute;right:-10px;top:80px;width:540px;opacity:.95}
+.thanks{align-items:center;justify-content:center;text-align:center}
+.thanks h1{font-size:110px}
+.thanks .qq{font-size:40px;color:#ffb585;font-weight:700;margin-top:6px}
+.chain{display:flex;align-items:center;gap:14px;margin-top:56px;justify-content:center;flex-wrap:wrap}
+.chain .n{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:118px;padding:14px 18px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14)}
+.chain .n b{font-size:34px} .chain .n span{font-size:14px;color:#aeb8de;letter-spacing:.08em;text-transform:uppercase}
+.chain .arr{color:#ffb585;font-size:26px}
+
+/* ---------- route ---------- */
+.route{display:flex;align-items:stretch;gap:0;width:100%;margin-top:40px}
+.step{flex:1;text-align:center;position:relative}
+.step .num{width:54px;height:54px;border-radius:50%;margin:0 auto 18px;display:grid;place-items:center;background:var(--ink);color:#fff;font-weight:800;font-size:22px;position:relative;z-index:1}
+.step:last-child .num{background:var(--c0)}
+.step::before{content:"";position:absolute;top:27px;left:-50%;width:100%;height:3px;background:var(--line)}
+.step:first-child::before{display:none}
+.step h3{font-size:24px;font-weight:800}
+.step p{font-size:16px;color:var(--muted);margin-top:4px}
+.step .cnt{margin-top:22px;font-size:54px;font-weight:800;color:var(--ink);line-height:1}
+.step .cnt small{display:block;font-size:14px;color:var(--muted);font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-top:6px}
+.step:last-child .cnt{color:var(--c0)}
+
+/* ---------- regex ---------- */
+.er{display:flex;align-items:flex-start;justify-content:center;gap:34px;margin-top:20px}
+.er .eq{font-family:var(--mono);font-size:110px;font-weight:700;line-height:1.1;color:var(--ink)}
+.er-part{display:flex;flex-direction:column;align-items:center}
+.tok{font-family:var(--mono);font-size:110px;font-weight:700;line-height:1.1}
+.tok.star{color:var(--ink)}
+.brace{width:100%;height:16px;border:3px solid currentColor;border-top:none;border-radius:0 0 12px 12px;margin-top:6px;opacity:.5}
+.cap{margin-top:16px;text-align:center;font-size:21px;color:var(--muted);line-height:1.35}
+.cap b{color:var(--ink);font-size:23px}
+
+/* proof */
+.proof{display:flex;flex-direction:column;gap:16px;width:100%}
+.proof .row{display:flex;gap:20px;align-items:center;font-size:24px;line-height:1.4}
+.proof .ic{flex:none;width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font-size:24px;font-weight:800;background:var(--soft);color:var(--ink)}
+.proof .row.res .ic{background:var(--ink);color:#fff}
+.decs{display:flex;gap:18px;margin-top:34px;width:100%}
+.dec{flex:1;text-align:center;padding:18px 10px}
+.dec .w{font-family:var(--mono);font-size:38px;font-weight:700}
+.dec .w .pre{color:var(--muted)} .dec .w .dot{color:var(--line);margin:0 4px}
+.dec .w .suf{color:var(--ok)}
+.dec .x{font-size:16px;color:var(--muted);margin-top:6px;font-family:var(--mono)}
+
+/* ---------- diagrams ---------- */
+.fa{width:100%;height:auto;display:block;overflow:visible}
+.fa .c{fill:var(--surface);stroke:var(--ink);stroke-width:2.4}
+.fa .c2{fill:none;stroke:var(--ink);stroke-width:2}
+.fa .n{font:700 19px var(--mono);fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.fa .s{font:500 12.5px var(--mono);fill:var(--muted);text-anchor:middle;dominant-baseline:central}
+.fa .line{fill:none;stroke:var(--eps);stroke-width:2.2}
+.fa .head{fill:var(--eps)}
+.fa .s0 .line{stroke:var(--c0)} .fa .s0 .head{fill:var(--c0)}
+.fa .s1 .line{stroke:var(--c1)} .fa .s1 .head{fill:var(--c1)}
+.fa .lbl{font:700 19px var(--mono);text-anchor:middle;dominant-baseline:central;paint-order:stroke;stroke:var(--bg);stroke-width:7px;stroke-linejoin:round}
+.fa .s0 .lbl{fill:var(--c0)} .fa .s1 .lbl{fill:var(--c1)}
+.fa .eps .lbl{fill:#7d84a3;font-style:italic;font-family:Georgia,"Times New Roman",serif;font-size:21px}
+.fa .startl{stroke:var(--ink);stroke-width:2.4}
+.fa .starth{fill:var(--ink)}
+.fa .box rect{fill:rgba(28,126,214,.045);stroke:#9cc3ea;stroke-width:2;stroke-dasharray:8 7}
+.fa .box-label{font:700 20px var(--mono);fill:#5d8fc4}
+.fa .notes text{font:600 15px var(--sans);fill:var(--muted)}
+/* animation of diagrams */
+.fa .st,.fa .start{opacity:0;transform:scale(.4);transform-box:fill-box;transform-origin:center;transition:opacity .35s ease,transform .5s cubic-bezier(.3,1.5,.5,1)}
+.slide.active .fa .st,.slide.active .fa .start{opacity:1;transform:none;transition-delay:var(--d)}
+.fa .line{stroke-dasharray:1 1;stroke-dashoffset:1;transition:stroke-dashoffset .55s ease}
+.slide.active .fa .line{stroke-dashoffset:0;transition:stroke-dashoffset .55s ease var(--d),stroke .4s ease,stroke-width .4s ease}
+.fa .head,.fa .lbl,.fa .box,.fa .notes text{opacity:0;transition:opacity .3s ease}
+.slide.active .fa .head,.slide.active .fa .lbl{opacity:1;transition-delay:calc(var(--d) + .4s)}
+.slide.active .fa .box,.slide.active .fa .notes text{opacity:1;transition-delay:var(--d)}
+/* highlight (ε-clausura) */
+.fa .st.hl .c{transition:fill .5s ease,stroke .5s ease}
+.slide.active .fa .st.hl .c{fill:var(--hl);stroke:var(--gold);stroke-width:3.4;transition-delay:var(--hd,2s)}
+.slide.active .fa .ed.hl .line{stroke:var(--gold);stroke-width:4;transition:stroke-dashoffset .55s ease var(--d),stroke .5s ease var(--hd,2s),stroke-width .5s ease var(--hd,2s)}
+.slide.active .fa .ed.hl .head{fill:var(--gold);transition:opacity .3s ease calc(var(--d) + .4s),fill .5s ease var(--hd,2s)}
+/* simulation */
+.fa .st.cur .c{fill:var(--c1s);stroke:var(--c1);stroke-width:4}
+.fa .st.cur.acc .c{fill:var(--oks);stroke:var(--ok)}
+.fa .ed.fire .line{stroke-width:5}
+/* dark diagrams */
+.dark .fa .c{fill:rgba(255,255,255,.06);stroke:#c9d2f2}
+.dark .fa .c2{stroke:#c9d2f2}
+.dark .fa .n{fill:#fff} .dark .fa .s{fill:#aeb8de}
+.dark .fa .lbl{stroke:var(--dark)}
+.dark .fa .startl{stroke:#c9d2f2} .dark .fa .starth{fill:#c9d2f2}
+.dark .fa .s0 .line{stroke:#ff9a5c} .dark .fa .s0 .head,.dark .fa .s0 .lbl{fill:#ff9a5c}
+.dark .fa .s1 .line{stroke:#74c0fc} .dark .fa .s1 .head,.dark .fa .s1 .lbl{fill:#74c0fc}
+.dark .fa .acc .c{fill:rgba(255,154,92,.18)}
+
+/* ---------- tables ---------- */
+.tbl{border-collapse:separate;border-spacing:0;font-size:22px;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.tbl th{background:var(--ink);color:#fff;font-weight:700;padding:12px 22px;font-size:18px;letter-spacing:.02em}
+.tbl td{padding:12px 22px;text-align:center;border-top:1px solid var(--line);font-family:var(--mono);font-weight:500}
+.tbl td:first-child{font-weight:700;font-family:var(--sans)}
+.tbl tr.acc td{background:#fff6ec}
+.tbl .new{display:inline-block;margin-left:8px;font:700 12px var(--sans);color:#fff;background:var(--c0);padding:3px 7px;border-radius:6px;vertical-align:middle;letter-spacing:.04em}
+.tbl.sm{font-size:19px} .tbl.sm td{padding:9px 16px} .tbl.sm th{padding:10px 16px;font-size:16px}
+.mark{color:var(--c0);font-weight:800}
+
+/* ---------- ε rule ---------- */
+.formula{font-family:var(--mono);font-size:38px;font-weight:700;text-align:center;padding:26px;border-radius:18px;background:var(--ink);color:#fff}
+.formula .e{color:#ffd43b}
+.example{font-family:var(--mono);font-size:24px;text-align:center;margin-top:20px;color:var(--ink)}
+.example .r{color:var(--c0);font-weight:700}
+.keep{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+.q{font-family:var(--mono);font-weight:700;font-size:24px;width:68px;height:68px;border-radius:50%;display:grid;place-items:center;background:var(--surface);border:2.5px solid var(--ink)}
+.q.gone{color:#b5b9c7;border-color:#d7d9e0;border-style:dashed;text-decoration:line-through}
+.q.fin{box-shadow:0 0 0 4px var(--bg),0 0 0 6.5px var(--ink)}
+
+/* ---------- partitions ---------- */
+.prow{display:grid;grid-template-columns:80px 430px 1fr;align-items:center;gap:22px;padding:18px 24px;border-radius:18px;background:var(--surface);border:1px solid var(--line);margin-bottom:16px}
+.prow .ps{font-size:26px;font-weight:800;color:var(--muted)}
+.groups{display:flex;gap:14px}
+.grp{display:flex;gap:8px;padding:8px 12px;border-radius:16px;border:2px dashed #b7bdd0;background:var(--soft)}
+.grp i{font-style:normal;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--surface);border:2.4px solid var(--ink);font-weight:800;font-size:20px}
+.grp.acc{border-color:var(--c0);background:var(--c0s)}
+.grp.acc i{box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--ink)}
+.grp.merge{border-style:solid;border-color:var(--ok);background:var(--oks)}
+.prow p{font-size:21px;line-height:1.4}
+.prow.final{border:2px solid var(--ok)}
+.badge{display:inline-block;padding:6px 14px;border-radius:999px;background:var(--ok);color:#fff;font-weight:800;font-size:18px;margin-left:8px}
+
+/* ---------- reasons ---------- */
+.reasons{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;width:100%}
+.reason{padding:28px 26px}
+.reason .k{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-weight:800;font-size:22px;background:var(--ink);color:#fff;margin-bottom:18px}
+.reason h3{font-size:25px;font-weight:800;margin-bottom:10px;line-height:1.2}
+.reason p{font-size:21px;color:var(--muted);line-height:1.45}
+.reason p b{color:var(--ink)}
+
+/* ---------- legend / meaning ---------- */
+.meaning{display:flex;flex-direction:column;gap:14px}
+.meaning div{display:flex;gap:14px;align-items:center;font-size:21px}
+.meaning .tag{flex:none;font-family:var(--mono);font-weight:700;padding:6px 12px;border-radius:10px;background:var(--soft);min-width:58px;text-align:center}
+.meaning .tag.ok{background:var(--oks);color:var(--ok)}
+
+/* ---------- simulator ---------- */
+.sim{display:flex;flex-direction:column;gap:16px}
+.sim .btns{display:flex;gap:10px;flex-wrap:wrap}
+.sim button{font:700 22px var(--mono);padding:10px 18px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;transition:transform .15s,border-color .15s}
+.sim button:hover{border-color:var(--c1);transform:translateY(-2px)}
+.sim .inrow{display:flex;gap:10px}
+.sim input{font:700 22px var(--mono);padding:10px 14px;border-radius:12px;border:2px solid var(--line);width:230px;background:var(--surface);color:var(--ink);outline:none}
+.sim input:focus{border-color:var(--c1)}
+.sim .go{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tape{display:flex;gap:6px;min-height:58px;align-items:center}
+.tape span{width:46px;height:52px;border-radius:10px;display:grid;place-items:center;font:700 26px var(--mono);background:var(--surface);border:2px solid var(--line);transition:all .25s}
+.tape span.done{background:var(--soft);color:var(--muted)}
+.tape span.now{border-color:var(--c1);background:var(--c1s);transform:translateY(-4px)}
+.tape .empty{font:600 18px var(--sans);color:var(--muted)}
+.trace{font:600 20px var(--mono);color:var(--muted);min-height:28px}
+.res{font-size:26px;font-weight:800;min-height:40px}
+.res.ok{color:var(--ok)} .res.bad{color:var(--bad)}
+.print-only{display:none}
+
+/* ---------- UI ---------- */
+#ui{position:fixed;left:0;right:0;bottom:0;height:calc(44px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px)!important;display:flex;align-items:center;gap:14px;padding:0 14px;color:#c9d2f2;font:600 13px var(--sans);transition:opacity .4s;z-index:5}
+#ui.hide{opacity:0}
+#prog{flex:1;height:4px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden}
+#prog i{display:block;height:100%;width:0;background:var(--c0);transition:width .4s ease}
+#ui button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;width:34px;height:30px;border-radius:8px;font-size:15px;cursor:pointer}
+#ui button:hover{background:rgba(255,255,255,.18)}
+#sec{min-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#hint{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:rgba(15,23,48,.92);color:#fff;font:600 14px var(--sans);padding:10px 18px;border-radius:999px;z-index:6;transition:opacity .6s;pointer-events:none;white-space:nowrap}
+#hint.hide{opacity:0}
+#rotate{display:none;position:fixed;top:10px;left:50%;transform:translateX(-50%);background:var(--c0);color:#fff;font:700 13px var(--sans);padding:8px 14px;border-radius:999px;z-index:7}
+@media (orientation:portrait) and (max-width:820px){#rotate{display:block}#hint{display:none}}
+
+@media (prefers-reduced-motion:reduce){.slide,.a,.f,.fa .st,.fa .start,.fa .line,.fa .head,.fa .lbl{transition-duration:.01s!important;transition-delay:0s!important}}
+
+/* ---------- print / PDF ---------- */
+@page{size:1280px 720px;margin:0}
+@media print{
+  html,body{overflow:visible;height:auto;background:#fff}
+  #stage{position:static;transform:none!important;box-shadow:none;border-radius:0;width:1280px;height:auto;overflow:visible;background:none}
+  .slide{position:relative;inset:auto;width:1280px;height:720px;opacity:1!important;visibility:visible!important;transform:none!important;break-after:page;page-break-after:always;overflow:hidden}
+  .slide:last-child{break-after:auto;page-break-after:auto}
+  .a,.f,.fa .st,.fa .start{opacity:1!important;transform:none!important}
+  .fa .line{stroke-dashoffset:0!important}
+  .fa .head,.fa .lbl,.fa .box,.fa .notes text{opacity:1!important}
+  .fa .st.hl .c{fill:var(--hl)!important;stroke:var(--gold)!important;stroke-width:3.4!important}
+  .fa .ed.hl .line{stroke:var(--gold)!important;stroke-width:4!important}
+  .fa .ed.hl .head{fill:var(--gold)!important}
+  *{transition:none!important;animation:none!important}
+  #ui,#hint,#rotate,.screen-only{display:none!important}
+  .print-only{display:block}
+  .slide::after{content:counter(sl);counter-increment:sl;position:absolute;right:30px;bottom:20px;font:600 14px var(--sans);color:#a3a9bb}
+  body{counter-reset:sl}
+}
+</style>
+</head>
+<body>
+<div id="rotate">↻ Gira el teléfono para verla mejor</div>
+<div id="hint">→ / clic para avanzar · ← regresar · F pantalla completa</div>
+<div id="stage">
+
+<!-- 1 · PORTADA -->
+<section class="slide dark cover" data-sec="Introducción">
+  <div class="cover-art"><svg class="fa" data-fa="min"></svg></div>
+  <div class="kicker a">Teoría de la Computación · Proyecto final · Ejercicio 2</div>
+  <h1 class="a" style="--d:.15s;margin-top:16px">Cadenas binarias que terminan en <span class="big01">01</span></h1>
+  <div class="sub a" style="--d:.3s">Σ = {0, 1} &nbsp;·&nbsp; R = (0+1)*01</div>
+  <ul class="team">
+    <li class="a left" style="--d:.5s">José Luis Vieyra Andrade</li>
+    <li class="a left" style="--d:.6s">Andrés Burr Tinoco</li>
+    <li class="a left" style="--d:.7s">Jonathan Brandon Jiménez Almaguer</li>
+    <li class="a left" style="--d:.8s">Leonardo Daniel Palacios Palacios</li>
+  </ul>
+</section>
+
+<!-- 2 · LENGUAJE -->
+<section class="slide v" data-sec="Introducción">
+  <div class="hd a"><span class="kicker">El lenguaje</span></div>
+  <h2 class="a" style="--d:.1s">Solo importan los <span class="z">dos últimos</span> símbolos</h2>
+  <div class="card a" style="--d:.25s;text-align:center;font-size:34px;padding:22px"><span class="mono">L₂ = { w ∈ {0,1}* : w termina en <b class="z">01</b> }</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:34px">
+    <div>
+      <div class="a" style="--d:.45s;font-size:20px;font-weight:800;color:var(--ok);margin-bottom:14px">✓ Sí pertenecen</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <span class="chip yes a zoom" style="--d:.55s"><span class="end01">01</span></span>
+        <span class="chip yes a zoom" style="--d:.62s">1<span class="end01">01</span></span>
+        <span class="chip yes a zoom" style="--d:.69s">00<span class="end01">01</span></span>
+        <span class="chip yes a zoom" style="--d:.76s">11<span class="end01">01</span></span>
+      </div>
+    </div>
+    <div>
+      <div class="a" style="--d:.9s;font-size:20px;font-weight:800;color:var(--bad);margin-bottom:14px">✗ No pertenecen</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <span class="chip no a zoom" style="--d:1s">ε</span>
+        <span class="chip no a zoom" style="--d:1.07s">0</span>
+        <span class="chip no a zoom" style="--d:1.14s">1</span>
+        <span class="chip no a zoom" style="--d:1.21s;outline:3px solid var(--bad);outline-offset:3px">10</span>
+        <span class="chip no a zoom" style="--d:1.28s">111</span>
+      </div>
+      <div class="note a" style="--d:1.5s;margin-top:14px">10 tiene los mismos símbolos… pero en el orden equivocado.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · RUTA -->
+<section class="slide v" data-sec="Introducción">
+  <div class="hd a"><span class="kicker">El camino</span></div>
+  <h2 class="a" style="--d:.1s">De una descripción en español a un autómata mínimo</h2>
+  <div class="route">
+    <div class="step a" style="--d:.3s"><div class="num">1</div><h3>Expresión regular</h3><p>(0+1)*01</p><div class="cnt mono" style="font-size:40px;padding-top:10px">ER</div></div>
+    <div class="step a" style="--d:.5s"><div class="num">2</div><h3>AFN-ε</h3><p>Thompson</p><div class="cnt">10<small>estados</small></div></div>
+    <div class="step a" style="--d:.7s"><div class="num">3</div><h3>AFN</h3><p>sin transiciones ε</p><div class="cnt">5<small>estados</small></div></div>
+    <div class="step a" style="--d:.9s"><div class="num">4</div><h3>AFD</h3><p>subconjuntos</p><div class="cnt">4<small>estados</small></div></div>
+    <div class="step a" style="--d:1.1s"><div class="num">5</div><h3>AFD mínimo</h3><p>particiones</p><div class="cnt">3<small>estados</small></div></div>
+  </div>
+</section>
+
+<!-- 4 · EXPRESIÓN REGULAR -->
+<section class="slide v" data-sec="Etapa 1 · Expresión regular">
+  <div class="hd a"><span class="kicker">Etapa 1 · Expresión regular</span><span class="bars" data-e="1"></span></div>
+  <h2 class="a" style="--d:.1s">Una línea describe todo el lenguaje</h2>
+  <div class="er">
+    <div class="eq a" style="--d:.2s">R =</div>
+    <div class="er-part a" style="--d:.45s"><div class="tok star">(0+1)*</div><div class="brace"></div><div class="cap"><b>Cualquier cadena</b><br>de 0s y 1s, incluso ε</div></div>
+    <div class="er-part a z" style="--d:.8s"><div class="tok">0</div><div class="brace"></div><div class="cap"><b>Penúltimo</b><br>símbolo</div></div>
+    <div class="er-part a o" style="--d:1.1s"><div class="tok">1</div><div class="brace"></div><div class="cap"><b>Último</b><br>símbolo</div></div>
+  </div>
+</section>
+
+<!-- 5 · JUSTIFICACIÓN ER -->
+<section class="slide v" data-sec="Etapa 1 · Expresión regular">
+  <div class="hd a"><span class="kicker">Etapa 1 · Justificación</span><span class="bars" data-e="1"></span></div>
+  <h2 class="a" style="--d:.1s">¿Por qué describe <span class="z">exactamente</span> a L₂?</h2>
+  <div class="proof">
+    <div class="row a left" style="--d:.3s"><div class="ic">→</div><div>Si w termina en 01, se escribe <b class="mono">w = x·01</b>, y <span class="mono">(0+1)*</span> genera <b>cualquier</b> x.</div></div>
+    <div class="row a left" style="--d:.55s"><div class="ic">←</div><div>Todo lo que genera R termina en 01: el <b class="z">0</b> y el <b class="o">1</b> van <b>fijos al final</b>.</div></div>
+    <div class="row res a left" style="--d:.8s"><div class="ic">∴</div><div><b class="mono">L(R) = L₂</b></div></div>
+  </div>
+  <div class="decs">
+    <div class="dec card a zoom" style="--d:1s"><div class="w"><span class="pre">ε</span><span class="dot">·</span><span class="suf">01</span></div><div class="x">01</div></div>
+    <div class="dec card a zoom" style="--d:1.1s"><div class="w"><span class="pre">1</span><span class="dot">·</span><span class="suf">01</span></div><div class="x">101</div></div>
+    <div class="dec card a zoom" style="--d:1.2s"><div class="w"><span class="pre">00</span><span class="dot">·</span><span class="suf">01</span></div><div class="x">0001</div></div>
+    <div class="dec card a zoom" style="--d:1.3s"><div class="w"><span class="pre">11</span><span class="dot">·</span><span class="suf">01</span></div><div class="x">1101</div></div>
+  </div>
+</section>
+
+<!-- 6 · THOMPSON: CASOS BASE -->
+<section class="slide" data-sec="Etapa 2 · AFN-ε (Thompson)">
+  <div class="hd a"><span class="kicker">Etapa 2 · Método de Thompson</span><span class="bars" data-e="2"></span></div>
+  <h2 class="a" style="--d:.1s">Casos base: un símbolo, una flecha</h2>
+  <p class="lead a" style="--d:.2s">Thompson arma el <b>AFN-ε</b> por piezas. Un AFN-ε puede moverse con <b><i>ε</i></b>, es decir, <b>sin leer nada</b>.</p>
+  <div class="body center" style="gap:60px">
+    <div style="width:420px;text-align:center"><svg class="fa" data-fa="base0"></svg><div class="pill a" style="--d:.9s;margin-top:14px">reconoce <b>0</b></div></div>
+    <div style="width:420px;text-align:center"><svg class="fa" data-fa="base1" data-d0=".6"></svg><div class="pill a" style="--d:1.2s;margin-top:14px">reconoce <b style="color:var(--c1)">1</b></div></div>
+  </div>
+  <div class="note a" style="--d:1.3s;display:flex;gap:28px;justify-content:center">
+    <span>➝ estado inicial</span><span>◎ estado final</span><span><b class="z">0</b> / <b class="o">1</b> leen un símbolo</span><span><i>ε</i> sin leer</span>
+  </div>
+</section>
+
+<!-- 7 · THOMPSON: UNIÓN -->
+<section class="slide" data-sec="Etapa 2 · AFN-ε (Thompson)">
+  <div class="hd a"><span class="kicker">Etapa 2 · Unión</span><span class="bars" data-e="2"></span></div>
+  <h2 class="a" style="--d:.1s">Unión <span class="mono">0+1</span>: elegir un camino</h2>
+  <div class="body center"><div style="width:860px"><svg class="fa" data-fa="union" data-d0=".3"></svg></div></div>
+  <div style="text-align:center"><span class="pill a" style="--d:1.6s">Desde q1, dos <i>ε</i>: una al camino del <b>0</b>, otra al del <b style="color:var(--c1)">1</b>. Ambos llegan a q6.</span></div>
+</section>
+
+<!-- 8 · THOMPSON: KLEENE -->
+<section class="slide" data-sec="Etapa 2 · AFN-ε (Thompson)">
+  <div class="hd a"><span class="kicker">Etapa 2 · Cerradura de Kleene</span><span class="bars" data-e="2"></span></div>
+  <h2 class="a" style="--d:.1s">Estrella <span class="mono">(0+1)*</span>: repetir o saltar</h2>
+  <div class="body center"><div style="width:900px"><svg class="fa" data-fa="kleene" data-d0=".3"></svg></div></div>
+</section>
+
+<!-- 9 · THOMPSON: CONCATENACIÓN / COMPLETO -->
+<section class="slide" data-sec="Etapa 2 · AFN-ε (Thompson)">
+  <div class="hd a"><span class="kicker">Etapa 2 · Concatenación → AFN-<span class="lc">ε</span> completo</span><span class="bars" data-e="2"></span></div>
+  <h2 class="a" style="--d:.1s">Pegamos las piezas: <span class="mono">(0+1)* · <span class="z">0</span> · <span class="o">1</span></span></h2>
+  <div class="body center"><div style="width:1080px"><svg class="fa" data-fa="enfa" data-d0=".2"></svg></div></div>
+  <div style="display:flex;gap:14px;justify-content:center">
+    <span class="pill a" style="--d:2.2s"><b>10</b> estados</span>
+    <span class="pill a" style="--d:2.3s">inicial <b>q0</b></span>
+    <span class="pill a" style="--d:2.4s">aceptación <b>q9</b></span>
+  </div>
+</section>
+
+<!-- 10 · ε-CLAUSURA -->
+<section class="slide" data-sec="Etapa 3 · AFN sin ε">
+  <div class="hd a"><span class="kicker">Etapa 3 · Quitar las <span class="lc">ε</span></span><span class="bars" data-e="3"></span></div>
+  <h2 class="a" style="--d:.1s"><i>ε</i>-clausura: a dónde llego <span class="z">sin leer nada</span></h2>
+  <div class="body center"><div style="width:1000px"><svg class="fa" data-fa="enfaCl" data-d0=".15" data-step=".03" style="--hd:1.5s"></svg></div></div>
+  <div style="text-align:center"><span class="pill a" style="--d:1.9s;font-size:22px;font-family:var(--mono)"><i>ε</i>-clausura(q0) = {q0, q1, q2, q4, q7}</span></div>
+</section>
+
+<!-- 11 · REGLA -->
+<section class="slide v" data-sec="Etapa 3 · AFN sin ε">
+  <div class="hd a"><span class="kicker">Etapa 3 · La regla</span><span class="bars" data-e="3"></span></div>
+  <h2 class="a" style="--d:.1s">Primero me muevo con <i>ε</i>, luego leo el símbolo</h2>
+  <div class="formula a zoom" style="--d:.3s">δ′(q, a) = δ( <span class="e">ε-clausura(q)</span>, a )</div>
+  <div class="example a" style="--d:.6s">δ′(q0, 0) = δ( {q0, q1, q2, q4, q7}, 0 ) = <span class="r">{q3, q8}</span></div>
+  <div class="a" style="--d:.9s;margin-top:34px;text-align:center;font-size:22px;font-weight:700">Solo sobreviven 5 estados</div>
+  <div class="keep">
+    <span class="q a zoom" style="--d:1.0s">q0</span><span class="q a zoom" style="--d:1.05s">q3</span><span class="q a zoom" style="--d:1.1s">q5</span><span class="q a zoom" style="--d:1.15s">q8</span><span class="q fin a zoom" style="--d:1.2s">q9</span>
+    <span style="width:30px"></span>
+    <span class="q gone a zoom" style="--d:1.4s">q1</span><span class="q gone a zoom" style="--d:1.45s">q2</span><span class="q gone a zoom" style="--d:1.5s">q4</span><span class="q gone a zoom" style="--d:1.55s">q6</span><span class="q gone a zoom" style="--d:1.6s">q7</span>
+  </div>
+  <div class="note a" style="--d:1.8s;text-align:center;margin-top:14px">Los tachados quedan inalcanzables. Acepta q9: el único cuya ε-clausura contiene a q9.</div>
+</section>
+
+<!-- 12 · AFN -->
+<section class="slide" data-sec="Etapa 3 · AFN sin ε">
+  <div class="hd a"><span class="kicker">Etapa 3 · AFN sin <span class="lc">ε</span></span><span class="bars" data-e="3"></span></div>
+  <h2 class="a" style="--d:.1s">AFN: con un <span class="z">0</span> puede “apostar”</h2>
+  <div class="body" style="gap:30px;align-items:center">
+    <div style="flex:1"><svg class="fa" data-fa="nfa" data-d0=".25"></svg></div>
+    <div style="width:350px;display:flex;flex-direction:column;gap:18px">
+      <table class="tbl sm a" style="--d:.4s">
+        <tr><th>Estado</th><th>0</th><th>1</th></tr>
+        <tr><td>→ q0</td><td>{q3, q8}</td><td>{q5}</td></tr>
+        <tr><td>q3</td><td>{q3, q8}</td><td>{q5}</td></tr>
+        <tr><td>q5</td><td>{q3, q8}</td><td>{q5}</td></tr>
+        <tr><td>q8</td><td>∅</td><td>{q9}</td></tr>
+        <tr class="acc"><td>* q9</td><td>∅</td><td>∅</td></tr>
+      </table>
+      <div class="card a" style="--d:1.8s;font-size:18px;line-height:1.45;padding:16px 20px">Con <b class="z">0</b> hay <b>dos destinos</b> (q3 o q8): por eso es <b>no determinista</b>.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 · SUBCONJUNTOS -->
+<section class="slide" data-sec="Etapa 4 · AFD (subconjuntos)">
+  <div class="hd a"><span class="kicker">Etapa 4 · Método de subconjuntos</span><span class="bars" data-e="4"></span></div>
+  <h2 class="a" style="--d:.1s">Cada estado del AFD es un <span class="z">conjunto</span> del AFN</h2>
+  <div class="body center col">
+    <table class="tbl a" style="--d:.3s;font-size:25px;min-width:900px">
+      <tr><th>AFD</th><th>Conjunto del AFN</th><th>con 0</th><th>con 1</th></tr>
+      <tr class="f" data-f="1"><td>→ A</td><td>{q0}</td><td>{q3, q8} = B<span class="new">NUEVO</span></td><td>{q5} = C<span class="new">NUEVO</span></td></tr>
+      <tr class="f" data-f="2"><td>B</td><td>{q3, q8}</td><td>B</td><td>{q5, q9} = D<span class="new">NUEVO</span></td></tr>
+      <tr class="f" data-f="3"><td>C</td><td>{q5}</td><td>B</td><td>C</td></tr>
+      <tr class="f acc" data-f="3"><td>* D</td><td>{q5, <b class="mark">q9</b>}</td><td>B</td><td>C</td></tr>
+    </table>
+    <div class="pill f" data-f="3" style="margin-top:26px">Sin conjuntos nuevos → <b>4 estados</b>. Acepta <b>D</b>, el único con q9.</div>
+  </div>
+</section>
+
+<!-- 14 · AFD -->
+<section class="slide" data-sec="Etapa 4 · AFD (subconjuntos)">
+  <div class="hd a"><span class="kicker">Etapa 4 · AFD equivalente</span><span class="bars" data-e="4"></span></div>
+  <h2 class="a" style="--d:.1s">Una flecha por símbolo desde cada estado</h2>
+  <div class="body" style="gap:34px;align-items:center">
+    <div style="flex:1;max-width:740px"><svg class="fa" data-fa="afd" data-d0=".25"></svg></div>
+    <div style="width:300px;display:flex;flex-direction:column;gap:18px">
+      <table class="tbl a" style="--d:.4s">
+        <tr><th>Estado</th><th>0</th><th>1</th></tr>
+        <tr><td>→ A</td><td>B</td><td>C</td></tr>
+        <tr><td>B</td><td>B</td><td>D</td></tr>
+        <tr><td>C</td><td>B</td><td>C</td></tr>
+        <tr class="acc"><td>* D</td><td>B</td><td>C</td></tr>
+      </table>
+      <div class="note a" style="--d:.6s">→ inicial &nbsp; * aceptación</div>
+    </div>
+  </div>
+</section>
+
+<!-- 15 · MINIMIZACIÓN -->
+<section class="slide v" data-sec="Etapa 5 · Minimización">
+  <div class="hd a"><span class="kicker">Etapa 5 · Minimización</span><span class="bars" data-e="5"></span></div>
+  <h2 class="a" style="--d:.1s">Juntar los estados que se comportan igual</h2>
+  <div class="prow a" style="--d:.3s"><span class="ps">P0</span>
+    <div class="groups"><span class="grp"><i>A</i><i>B</i><i>C</i></span><span class="grp acc"><i>D</i></span></div>
+    <p>Separamos el que <b>acepta</b> de los que no.</p></div>
+  <div class="prow f" data-f="1"><span class="ps">P1</span>
+    <div class="groups"><span class="grp"><i>A</i><i>C</i></span><span class="grp"><i>B</i></span><span class="grp acc"><i>D</i></span></div>
+    <p>Con <b class="o">1</b>: B → D (acepta), pero A y C no. <b>B se separa.</b></p></div>
+  <div class="prow final f" data-f="2"><span class="ps" style="color:var(--ok)">P2</span>
+    <div class="groups"><span class="grp merge"><i>A</i><i>C</i></span><span class="grp"><i>B</i></span><span class="grp acc"><i>D</i></span></div>
+    <p>A y C: con <b class="z">0</b> → B, con <b class="o">1</b> → C. <b>Iguales: se fusionan.</b><span class="badge">4 → 3</span></p></div>
+</section>
+
+<!-- 16 · AFD MÍNIMO -->
+<section class="slide" data-sec="Etapa 5 · Minimización">
+  <div class="hd a"><span class="kicker">Etapa 5 · AFD mínimo</span><span class="bars" data-e="5"></span></div>
+  <h2 class="a" style="--d:.1s">Tres estados, cada uno con significado</h2>
+  <div class="body" style="gap:40px;align-items:center">
+    <div style="flex:1"><svg class="fa" data-fa="min" data-d0=".25"></svg></div>
+    <div class="meaning" style="width:350px">
+      <div class="a left" style="--d:1.4s"><span class="tag">S0</span>todavía nada útil</div>
+      <div class="a left" style="--d:1.6s"><span class="tag">S1</span>el último fue <b class="z">0</b></div>
+      <div class="a left" style="--d:1.8s"><span class="tag ok">S2</span><span>acabo de leer <b class="mono" style="color:var(--ok)">01</b> ✓</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 17 · JUSTIFICACIÓN MIN -->
+<section class="slide" data-sec="Etapa 5 · Minimización">
+  <div class="hd a"><span class="kicker">Etapa 5 · Justificación</span><span class="bars" data-e="5"></span></div>
+  <h2 class="a" style="--d:.1s">¿Por qué sigue aceptando el mismo lenguaje?</h2>
+  <div class="body center">
+    <div class="reasons">
+      <div class="card reason a" style="--d:.3s"><div class="k">1</div><h3>Solo fusionamos A y C</h3><p><b>Ninguna cadena</b> los distingue: con 0 y con 1 llevan a los mismos grupos.</p></div>
+      <div class="card reason a" style="--d:.55s"><div class="k">2</div><h3>La aceptación no cambia</h3><p>D, el <b>único estado de aceptación</b>, queda intacto como S2.</p></div>
+      <div class="card reason a" style="--d:.8s"><div class="k">3</div><h3>Ya es mínimo</h3><p>Los 3 estados son <b>distinguibles</b>: ε separa a S2 y “1” separa S0 de S1.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 18 · VERIFICACIÓN -->
+<section class="slide" data-sec="Verificación">
+  <div class="hd a"><span class="kicker">Verificación</span></div>
+  <h2 class="a" style="--d:.1s">Probémoslo con cadenas</h2>
+  <div class="body" style="gap:36px;align-items:center">
+    <div style="flex:1"><svg class="fa" id="simfa" data-fa="min" data-d0=".2"></svg></div>
+    <div class="sim screen-only a" style="--d:.5s;width:420px">
+      <div class="btns nonav">
+        <button data-w="1101">1101</button><button data-w="10">10</button><button data-w="0001">0001</button><button data-w="111">111</button>
+      </div>
+      <div class="inrow nonav"><input id="simIn" inputmode="numeric" maxlength="12" placeholder="otra: 0110…" autocomplete="off"><button class="go" id="simGo">Probar</button></div>
+      <div class="tape" id="tape"><span class="empty">Elige una cadena</span></div>
+      <div class="trace" id="trace"></div>
+      <div class="res" id="res"></div>
+    </div>
+    <div class="print-only" style="width:420px">
+      <table class="tbl sm">
+        <tr><th>Cadena</th><th>Recorrido</th><th></th></tr>
+        <tr><td>1101</td><td>S0→S0→S0→S1→S2</td><td style="color:var(--ok)">✓</td></tr>
+        <tr><td>0001</td><td>S0→S1→S1→S1→S2</td><td style="color:var(--ok)">✓</td></tr>
+        <tr><td>10</td><td>S0→S0→S1</td><td style="color:var(--bad)">✗</td></tr>
+        <tr><td>111</td><td>S0→S0→S0→S0</td><td style="color:var(--bad)">✗</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="card a" style="--d:.8s;padding:14px 22px;font-size:18px;background:var(--oks);border-color:#bfe3c7">✓ Verificado por computadora: ER, AFN-ε, AFN, AFD y AFD mínimo aceptan exactamente las mismas <b>8,191 cadenas</b> de longitud 0 a 12.</div>
+</section>
+
+<!-- 19 · CIERRE -->
+<section class="slide dark thanks" data-sec="Cierre">
+  <h1 class="a zoom">Gracias</h1>
+  <div class="qq a" style="--d:.3s">¿Preguntas?</div>
+  <div class="chain">
+    <div class="n a" style="--d:.6s"><b class="mono" style="font-size:24px;padding:6px 0">(0+1)*01</b><span>ER</span></div><span class="arr a" style="--d:.7s">→</span>
+    <div class="n a" style="--d:.8s"><b>10</b><span>AFN-ε</span></div><span class="arr a" style="--d:.9s">→</span>
+    <div class="n a" style="--d:1s"><b>5</b><span>AFN</span></div><span class="arr a" style="--d:1.1s">→</span>
+    <div class="n a" style="--d:1.2s"><b>4</b><span>AFD</span></div><span class="arr a" style="--d:1.3s">→</span>
+    <div class="n a" style="--d:1.4s;border-color:#ffb585"><b style="color:#ffb585">3</b><span>Mínimo</span></div>
+  </div>
+</section>
+
+<!-- 20 · ANEXO A -->
+<section class="slide" data-sec="Anexo (solo si preguntan)">
+  <div class="hd a"><span class="kicker" style="color:var(--muted)">Anexo · solo si preguntan</span></div>
+  <h2 class="a" style="--d:.1s">Tabla completa de ε-clausuras</h2>
+  <div class="body center" style="gap:30px;align-items:flex-start">
+    <table class="tbl sm a" style="--d:.2s;min-width:440px">
+      <tr><th>q</th><th>ε-clausura(q)</th></tr>
+      <tr><td>q0</td><td>{q0, q1, q2, q4, q7}</td></tr>
+      <tr><td>q1</td><td>{q1, q2, q4}</td></tr>
+      <tr><td>q2</td><td>{q2}</td></tr>
+      <tr><td>q3</td><td>{q1, q2, q3, q4, q6, q7}</td></tr>
+      <tr><td>q4</td><td>{q4}</td></tr>
+    </table>
+    <table class="tbl sm a" style="--d:.3s;min-width:440px">
+      <tr><th>q</th><th>ε-clausura(q)</th></tr>
+      <tr><td>q5</td><td>{q1, q2, q4, q5, q6, q7}</td></tr>
+      <tr><td>q6</td><td>{q1, q2, q4, q6, q7}</td></tr>
+      <tr><td>q7</td><td>{q7}</td></tr>
+      <tr><td>q8</td><td>{q8}</td></tr>
+      <tr class="acc"><td>q9</td><td>{q9}</td></tr>
+    </table>
+  </div>
+  <div class="note a" style="--d:.4s;text-align:center">δ′(q, a) = δ(ε-clausura(q), a) &nbsp;·&nbsp; F′ = { q : ε-clausura(q) contiene a q9 } = {q9}</div>
+</section>
+
+<!-- 21 · ANEXO B -->
+<section class="slide" data-sec="Anexo (solo si preguntan)">
+  <div class="hd a"><span class="kicker" style="color:var(--muted)">Anexo · solo si preguntan</span></div>
+  <h2 class="a" style="--d:.1s">Pares distinguibles del AFD</h2>
+  <div class="body center">
+    <table class="tbl a" style="--d:.2s;min-width:820px">
+      <tr><th>Par</th><th>Cadena que los distingue</th></tr>
+      <tr><td>(A, B)</td><td>1 → A llega a C ✗, B llega a D ✓</td></tr>
+      <tr><td>(B, C)</td><td>1 → B llega a D ✓, C llega a C ✗</td></tr>
+      <tr><td>(A, D) (B, D) (C, D)</td><td>ε → solo D es de aceptación</td></tr>
+      <tr class="acc"><td>(A, C)</td><td>ninguna → equivalentes, se fusionan</td></tr>
+    </table>
+  </div>
+</section>
+
+</div>
+
+<div id="ui">
+  <span id="sec"></span>
+  <div id="prog"><i></i></div>
+  <span id="cnt"></span>
+  <button id="bPrev" title="Anterior (←)">‹</button>
+  <button id="bNext" title="Siguiente (→)">›</button>
+  <button id="bFull" title="Pantalla completa (F)">⛶</button>
+</div>
+
+<script>
+/* ================= Autómatas (diagramas generados) ================= */
+const NS='http://www.w3.org/2000/svg';
+const V=(x,y)=>({x,y}), add=(a,b)=>V(a.x+b.x,a.y+b.y), sub=(a,b)=>V(a.x-b.x,a.y-b.y), mul=(a,k)=>V(a.x*k,a.y*k);
+const nrm=a=>{const l=Math.hypot(a.x,a.y)||1;return V(a.x/l,a.y/l)}, r1=n=>Math.round(n*10)/10, P=p=>r1(p.x)+','+r1(p.y);
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e}
+
+const K=[{id:'q0',x:60,y:220,start:1},{id:'q1',x:190,y:220},{id:'q2',x:330,y:135},{id:'q3',x:510,y:135},{id:'q4',x:330,y:305},{id:'q5',x:510,y:305},{id:'q6',x:650,y:220}];
+const KE=[{f:'q0',t:'q1',l:'ε'},{f:'q1',t:'q2',l:'ε'},{f:'q1',t:'q4',l:'ε',side:-1},{f:'q2',t:'q3',l:'0'},{f:'q4',t:'q5',l:'1'},{f:'q3',t:'q6',l:'ε'},{f:'q5',t:'q6',l:'ε',side:-1},
+  {f:'q6',t:'q1',l:'ε',c:[420,-100]},{f:'q6',t:'q7',l:'ε'},{f:'q0',t:'q7',l:'ε',c:[430,560]}];
+const SP={
+  base0:{vb:'5 28 310 84',states:[{id:'i',x:90,y:70,start:1},{id:'f',x:270,y:70,accept:1}],edges:[{f:'i',t:'f',l:'0'}]},
+  base1:{vb:'5 28 310 84',states:[{id:'i',x:90,y:70,start:1},{id:'f',x:270,y:70,accept:1}],edges:[{f:'i',t:'f',l:'1'}]},
+  union:{vb:'25 28 670 248',states:[{id:'q1',x:110,y:150,start:1},{id:'q2',x:280,y:65},{id:'q3',x:480,y:65},{id:'q4',x:280,y:235},{id:'q5',x:480,y:235},{id:'q6',x:650,y:150,accept:1}],
+    edges:[{f:'q1',t:'q2',l:'ε'},{f:'q1',t:'q4',l:'ε',side:-1},{f:'q2',t:'q3',l:'0'},{f:'q4',t:'q5',l:'1'},{f:'q3',t:'q6',l:'ε'},{f:'q5',t:'q6',l:'ε',side:-1}]},
+  kleene:{vb:'-30 28 900 404',states:[...K,{id:'q7',x:800,y:220,accept:1}],edges:KE,
+    notes:[{x:452,y:47,text:'repetir'},{x:462,y:405,text:'saltar (cero veces → ε)'}]},
+  enfa:{vb:'-40 22 1190 418',states:[...K,{id:'q7',x:800,y:220},{id:'q8',x:950,y:220,d:1.5},{id:'q9',x:1100,y:220,accept:1,d:1.8}],
+    edges:[...KE,{f:'q7',t:'q8',l:'0',d:1.6},{f:'q8',t:'q9',l:'1',d:1.9}],
+    boxes:[{x:22,y:32,w:812,h:392,label:'(0+1)*',d:.1}]},
+  nfa:{vb:'0 25 870 432',states:[{id:'q0',x:90,y:240,start:1},{id:'q3',x:340,y:120},{id:'q5',x:340,y:360},{id:'q8',x:610,y:240},{id:'q9',x:810,y:240,accept:1}],
+    edges:[{f:'q0',t:'q3',l:'0'},{f:'q0',t:'q5',l:'1',side:-1},{f:'q0',t:'q8',l:'0',lt:.72},{f:'q3',t:'q3',l:'0',loop:-90},{f:'q5',t:'q5',l:'1',loop:90},
+      {f:'q3',t:'q5',l:'1',c:[395,240],lt:.32},{f:'q5',t:'q3',l:'0',c:[285,240],lt:.32},{f:'q3',t:'q8',l:'0'},{f:'q5',t:'q8',l:'0',side:-1},{f:'q8',t:'q9',l:'1'}]},
+  afd:{vb:'0 35 740 470',r:36,states:[{id:'A',sub:'{q0}',x:100,y:270,start:1},{id:'B',sub:'{q3,q8}',x:380,y:140},{id:'C',sub:'{q5}',x:380,y:400},{id:'D',sub:'{q5,q9}',x:660,y:270,accept:1}],
+    edges:[{f:'A',t:'B',l:'0'},{f:'A',t:'C',l:'1',side:-1},{f:'B',t:'B',l:'0',loop:-90},{f:'C',t:'C',l:'1',loop:90},{f:'B',t:'D',l:'1',c:[540,160]},{f:'D',t:'B',l:'0',c:[500,250]},
+      {f:'C',t:'B',l:'0'},{f:'D',t:'C',l:'1',side:-1}]},
+  min:{vb:'0 132 830 268',r:36,states:[{id:'S0',sub:'{A,C}',x:110,y:250,start:1},{id:'S1',sub:'{B}',x:420,y:250},{id:'S2',sub:'{D}',x:730,y:250,accept:1}],
+    edges:[{f:'S0',t:'S1',l:'0'},{f:'S0',t:'S0',l:'1',loop:-90},{f:'S1',t:'S1',l:'0',loop:-90},{f:'S1',t:'S2',l:'1',c:[575,212]},{f:'S2',t:'S1',l:'0',c:[575,288]},{f:'S2',t:'S0',l:'1',c:[420,470]}]}
+};
+SP.enfaCl={...SP.enfa,hlS:['q0','q1','q2','q4','q7'],hlE:['q0-q1','q1-q2','q1-q4','q0-q7']};
+SP.enfaCl.states=SP.enfa.states.map(s=>({...s,d:undefined}));SP.enfaCl.edges=SP.enfa.edges.map(e=>({...e,d:undefined}));
+
+function build(svg,spec){
+  const R=spec.r||26, d0=+(svg.dataset.d0||.2), step=+(svg.dataset.step||.07);
+  const hlS=new Set(spec.hlS||[]), hlE=new Set(spec.hlE||[]);
+  svg.setAttribute('viewBox',spec.vb);
+  const S={};spec.states.forEach(s=>S[s.id]=s);
+  const gB=el('g',{},svg),gE=el('g',{},svg),gS=el('g',{},svg),gN=el('g',{class:'notes'},svg);
+  (spec.boxes||[]).forEach(b=>{const g=el('g',{class:'box',style:`--d:${b.d||0}s`},gB);el('rect',{x:b.x,y:b.y,width:b.w,height:b.h,rx:18},g);
+    if(b.label){const t=el('text',{x:b.x+18,y:b.y+30,class:'box-label'},g);t.textContent=b.label}});
+  spec.states.forEach((s,i)=>{
+    const r=s.r||R, dd=s.d??(d0+i*step);
+    if(s.start){const g=el('g',{class:'start',style:`--d:${dd}s`},gS);
+      el('line',{x1:s.x-r-46,y1:s.y,x2:s.x-r-11,y2:s.y,class:'startl'},g);
+      el('polygon',{points:`${s.x-r},${s.y} ${s.x-r-12},${s.y-6} ${s.x-r-12},${s.y+6}`,class:'starth'},g)}
+    const g=el('g',{class:'st'+(s.accept?' acc':'')+(hlS.has(s.id)?' hl':''),'data-id':s.id,style:`--d:${dd}s`},gS);
+    el('circle',{cx:s.x,cy:s.y,r,class:'c'},g);
+    if(s.accept)el('circle',{cx:s.x,cy:s.y,r:r-5.5,class:'c2'},g);
+    const t=el('text',{x:s.x,y:s.sub?s.y-7:s.y,class:'n'},g);t.textContent=s.id;
+    if(s.sub){const u=el('text',{x:s.x,y:s.y+13,class:'s'},g);u.textContent=s.sub}
+  });
+  const nS=spec.states.length;
+  spec.edges.forEach((e,i)=>{
+    const dd=e.d??(d0+nS*step+i*step);
+    const A=S[e.f],B=S[e.t],rA=A.r||R,rB=B.r||R,ca=V(A.x,A.y),cb=V(B.x,B.y),AH=11;
+    const sym=e.l==='ε'?'eps':(e.l==='0'?'s0':'s1');
+    const g=el('g',{class:`ed ${sym}${hlE.has(e.f+'-'+e.t)?' hl':''}`,'data-from':e.f,'data-sym':e.l,style:`--d:${dd}s`},gE);
+    let d,tip,u,lp;
+    if(e.loop!==undefined){
+      const a=e.loop*Math.PI/180,s=.42,k=rA+52,dir=t=>V(Math.cos(t),Math.sin(t));
+      const p1=add(ca,mul(dir(a-s),rA)),c1=add(ca,mul(dir(a-.62),k)),c2=add(ca,mul(dir(a+.62),k));
+      tip=add(ca,mul(dir(a+s),rA));u=nrm(sub(tip,c2));
+      d=`M${P(p1)} C${P(c1)} ${P(c2)} ${P(sub(tip,mul(u,AH)))}`;
+      lp=add(ca,mul(dir(a),rA+54));
+    }else{
+      const c=e.c?V(e.c[0],e.c[1]):null;
+      const p1=add(ca,mul(nrm(sub(c||cb,ca)),rA));
+      tip=add(cb,mul(nrm(sub(c||ca,cb)),rB));u=nrm(sub(tip,c||p1));
+      const base=sub(tip,mul(u,AH));
+      d=c?`M${P(p1)} Q${P(c)} ${P(base)}`:`M${P(p1)} L${P(base)}`;
+      const t=e.lt??.5,off=(e.lo||16)*(e.side||1);
+      if(c){const q=V((1-t)**2*p1.x+2*t*(1-t)*c.x+t*t*tip.x,(1-t)**2*p1.y+2*t*(1-t)*c.y+t*t*tip.y);
+        lp=add(q,mul(nrm(sub(c,mul(add(p1,tip),.5))),off));}
+      else{const q=add(p1,mul(sub(tip,p1),t));let n=V(-u.y,u.x);
+        if(n.y>.01||(Math.abs(n.y)<=.01&&n.x>0))n=mul(n,-1);lp=add(q,mul(n,off));}
+    }
+    if(e.lp)lp=V(e.lp[0],e.lp[1]);
+    el('path',{d,class:'line',pathLength:1},g);
+    const pv=V(-u.y,u.x),base=sub(tip,mul(u,AH));
+    el('polygon',{points:`${P(tip)} ${P(add(base,mul(pv,6)))} ${P(sub(base,mul(pv,6)))}`,class:'head'},g);
+    const tx=el('text',{x:r1(lp.x),y:r1(lp.y),class:'lbl'},g);tx.textContent=e.l;
+  });
+  (spec.notes||[]).forEach((n,i)=>{const t=el('text',{x:n.x,y:n.y,style:`--d:${d0+(nS+spec.edges.length)*step+.3}s`},gN);t.textContent=n.text});
+}
+document.querySelectorAll('svg[data-fa]').forEach(s=>build(s,SP[s.dataset.fa]));
+
+/* bars de etapa */
+document.querySelectorAll('.bars').forEach(b=>{for(let i=1;i<=5;i++){const x=document.createElement('i');if(i<=+b.dataset.e)x.className='on';b.appendChild(x)}});
+
+/* ================= Navegación ================= */
+const slides=[...document.querySelectorAll('.slide')];
+const stage=document.getElementById('stage');
+const printMode=/[?&]print/.test(location.search);
+let cur=0;
+function fit(){const uiH=window.innerHeight>500?44:0;const s=Math.min(innerWidth/1280,(innerHeight-uiH)/720);
+  stage.style.transform=`translate(-50%,calc(-50% - ${uiH/2}px)) scale(${s})`}
+function frags(s){return [...s.querySelectorAll('.f')]}
+function show(i,back){
+  i=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,j)=>{s.classList.toggle('active',j===i);s.classList.toggle('past',j<i)});
+  frags(slides[i]).forEach(f=>f.classList.toggle('on',!!back));
+  cur=i;
+  document.getElementById('cnt').textContent=(i+1)+' / '+slides.length;
+  document.getElementById('sec').textContent=slides[i].dataset.sec||'';
+  document.querySelector('#prog i').style.width=((i)/(slides.length-1)*100)+'%';
+  try{history.replaceState(null,'','#'+(i+1))}catch(e){}
+}
+function next(){const off=frags(slides[cur]).filter(f=>!f.classList.contains('on'));
+  if(off.length){const k=Math.min(...off.map(f=>+f.dataset.f));off.filter(f=>+f.dataset.f===k).forEach(f=>f.classList.add('on'))}
+  else if(cur<slides.length-1)show(cur+1)}
+function prev(){const on=frags(slides[cur]).filter(f=>f.classList.contains('on'));
+  if(on.length){const k=Math.max(...on.map(f=>+f.dataset.f));on.filter(f=>+f.dataset.f===k).forEach(f=>f.classList.remove('on'))}
+  else if(cur>0)show(cur-1,true)}
+function full(){try{const r=!document.fullscreenElement?document.documentElement.requestFullscreen?.():document.exitFullscreen?.();r&&r.catch&&r.catch(()=>{})}catch(e){}}
+
+if(printMode){slides.forEach(s=>s.classList.add('active'));document.querySelectorAll('.f').forEach(f=>f.classList.add('on'))}
+else{
+  window.addEventListener('resize',fit);fit();
+  show(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
+  document.addEventListener('keydown',e=>{
+    if(e.target.tagName==='INPUT')return;
+    if(['ArrowRight','PageDown',' ','Enter','ArrowDown'].includes(e.key)){e.preventDefault();next()}
+    else if(['ArrowLeft','PageUp','Backspace','ArrowUp'].includes(e.key)){e.preventDefault();prev()}
+    else if(e.key==='Home')show(0);else if(e.key==='End')show(slides.length-1);
+    else if(e.key==='f'||e.key==='F')full();
+  });
+  document.addEventListener('click',e=>{
+    if(e.target.closest('button,input,a,.nonav,#ui'))return;
+    if(e.clientX<innerWidth*.25)prev();else next();
+  });
+  let tx=null,ty=null;
+  document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+  document.addEventListener('touchend',e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;
+    if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)){dx<0?next():prev()}tx=null},{passive:true});
+  document.getElementById('bNext').onclick=next;document.getElementById('bPrev').onclick=prev;document.getElementById('bFull').onclick=full;
+  setTimeout(()=>document.getElementById('hint').classList.add('hide'),4500);
+  let idle;const ui=document.getElementById('ui');
+  document.addEventListener('mousemove',()=>{ui.classList.remove('hide');clearTimeout(idle);idle=setTimeout(()=>{if(document.fullscreenElement)ui.classList.add('hide')},2500)});
+  window.addEventListener('beforeprint',()=>{slides.forEach(s=>s.classList.add('active'));document.querySelectorAll('.f').forEach(f=>f.classList.add('on'))});
+  window.addEventListener('afterprint',()=>show(cur));
+}
+
+/* ================= Simulador del AFD mínimo ================= */
+const MT={S0:{0:'S1',1:'S0'},S1:{0:'S1',1:'S2'},S2:{0:'S1',1:'S0'}};
+let simT=null;
+function sim(w){
+  clearTimeout(simT);
+  const svg=document.getElementById('simfa'),tape=document.getElementById('tape'),res=document.getElementById('res'),tr=document.getElementById('trace');
+  svg.querySelectorAll('.cur,.fire').forEach(x=>x.classList.remove('cur','fire'));
+  tape.innerHTML=w.length?[...w].map(c=>`<span>${c}</span>`).join(''):'<span class="empty">cadena vacía (ε)</span>';
+  res.className='res';res.textContent='';
+  let s='S0',i=0;const path=[s];
+  const mark=x=>{svg.querySelectorAll('.st.cur').forEach(n=>n.classList.remove('cur'));svg.querySelector(`.st[data-id="${x}"]`).classList.add('cur')};
+  mark(s);tr.textContent=path.join(' → ');
+  const cells=[...tape.querySelectorAll('span:not(.empty)')];
+  const stepf=()=>{
+    cells.forEach(c=>c.classList.remove('now'));
+    if(i>=w.length){const ok=s==='S2';res.className='res '+(ok?'ok':'bad');res.textContent=ok?'✓ Acepta (termina en S2)':'✗ Rechaza (termina en '+s+')';return}
+    const c=w[i];cells[i].classList.add('now');
+    const ed=svg.querySelector(`.ed[data-from="${s}"][data-sym="${c}"]`);ed.classList.add('fire');setTimeout(()=>ed.classList.remove('fire'),550);
+    s=MT[s][c];mark(s);path.push(s);tr.textContent=path.join(' → ');
+    setTimeout(()=>{cells[i-1]&&cells[i-1].classList.add('done')},400);
+    i++;simT=setTimeout(stepf,800);
+  };
+  simT=setTimeout(stepf,500);
+}
+document.querySelectorAll('.sim [data-w]').forEach(b=>b.onclick=()=>sim(b.dataset.w));
+const simIn=document.getElementById('simIn');
+simIn.addEventListener('input',()=>{simIn.value=simIn.value.replace(/[^01]/g,'')});
+simIn.addEventListener('keydown',e=>{if(e.key==='Enter')sim(simIn.value)});
+document.getElementById('simGo').onclick=()=>sim(simIn.value);
+</script>
+</body>
+</html>
